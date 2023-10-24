@@ -1,34 +1,25 @@
 import javax.servlet.http.HttpServletRequest;
 
 public class TimezoneValidateFilter {
-    private String timeZone;
+    private final String timeZone;
     private int timeShift;
     private boolean isParsed;
-    private String error;
 
     public TimezoneValidateFilter(HttpServletRequest req) {
         timeZone = req.getParameter("timezone");
-        if (timeZone == null || timeZone.equals("")) {
-            timeZone = "UTC+0";
-            timeShift = 0;
-        }
+        parseTimezone(timeZone);
+    }
 
+    public int parseTimezone(String timeZone) {
         try {
             timeShift = Integer.parseInt(timeZone.replace("UTC", "").trim());
             isParsed = true;
-            if (timeShift >= 0) {
-                timeZone = "UTC+" + timeShift;
-            } else {
-                timeZone = "UTC" + timeShift;
-            }
+
         } catch (Exception e) {
             isParsed = false;
-            error = "Invalid Timezone";
-        }
-    }
 
-    public String getError() {
-        return error;
+        }
+        return timeShift;
     }
 
     public int getTimeShift() {
